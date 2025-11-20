@@ -1,0 +1,8 @@
+# Python 3.9+ 호환 로컬 개발용 패키지
+Flask==3.0.0
+Pillow==10.4.0
+numpy>=1.24.0,<2.0.0
+Werkzeug==3.0.1
+rembg==2.0.61
+gunicorn==21.2.0
+onnxruntime==1.19.2

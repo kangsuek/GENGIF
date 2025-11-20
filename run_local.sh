@@ -21,8 +21,10 @@ echo ""
 # 필요한 패키지 설치 여부 확인
 echo "Checking dependencies..."
 $PYTHON_CMD -c "import flask" 2>/dev/null || {
-    echo "📦 Installing dependencies..."
-    $PYTHON_CMD -m pip install -r requirements.txt
+    echo "📦 Installing dependencies for local development..."
+    echo "Using requirements-local.txt (Python 3.9+ compatible)"
+    $PYTHON_CMD -m pip install --upgrade pip
+    $PYTHON_CMD -m pip install -r requirements-local.txt
 }
 
 echo ""

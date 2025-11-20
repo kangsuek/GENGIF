@@ -24,12 +24,14 @@ echo Using: %PYTHON_CMD%
 echo.
 
 REM 의존성 설치
-echo 📦 Installing dependencies...
-%PYTHON_CMD% -m pip install -r requirements.txt
+echo 📦 Installing dependencies for local development...
+echo Using requirements-local.txt (Python 3.9+ compatible)
+%PYTHON_CMD% -m pip install --upgrade pip
+%PYTHON_CMD% -m pip install -r requirements-local.txt
 echo.
 
 echo ✅ Starting Flask development server...
-echo 🌐 Open http://localhost:8080 in your browser
+echo 🌐 Open http://localhost:5000 in your browser
 echo.
 echo Press Ctrl+C to stop the server
 echo.
@@ -37,4 +39,5 @@ echo.
 REM Flask 개발 서버 실행
 set FLASK_APP=app.py
 set FLASK_ENV=development
+set PORT=5000
 %PYTHON_CMD% app.py
