@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF 생성기 - 부드러운 애니메이션</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .upload-box {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: #f8f9ff;
+        }
+
+        .upload-box:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+            transform: translateY(-5px);
+        }
+
+        .upload-box.has-image {
+            border-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .btn-remove-bg {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .btn-remove-bg:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .btn-remove-bg:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nobg-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            border: 2px solid #4caf50;
+        }
+
+        .btn-download-nobg {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .btn-download-nobg:hover {
+            background: #45a049;
+        }
+
+        .settings {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .settings h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .setting-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-row label {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .setting-row input[type="range"] {
+            width: 60%;
+            cursor: pointer;
+        }
+
+        .setting-row .value {
+            min-width: 60px;
+            text-align: right;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-download {
+            background: #4caf50;
+            color: white;
+            display: none;
+        }
+
+        .btn-download:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GIF 생성기</h1>
+        <p class="subtitle">두 개의 이미지를 업로드하여 부드러운 애니메이션 GIF를 만드세요</p>
+
+        <div class="upload-section">
+            <div class="upload-box" id="uploadBox1" onclick="document.getElementById('file1').click()">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">첫 번째 이미지<br>클릭하여 업로드</div>
+                <input type="file" id="file1" accept="image/*">
+                <img class="preview-image" id="preview1">
+                <button class="btn-remove-bg" id="removeBg1" onclick="event.stopPropagation(); removeBackground(1)">🗑️ 배경 제거</button>
+                <img class="nobg-preview" id="nobg1">
+                <button class="btn-download-nobg" id="downloadNobg1" onclick="event.stopPropagation(); downloadNoBg(1)">📥 배경 제거 이미지 다운로드</button>
+            </div>
+
+            <div class="upload-box" id="uploadBox2" onclick="document.getElementById('file2').click()">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">두 번째 이미지<br>클릭하여 업로드</div>
+                <input type="file" id="file2" accept="image/*">
+                <img class="preview-image" id="preview2">
+                <button class="btn-remove-bg" id="removeBg2" onclick="event.stopPropagation(); removeBackground(2)">🗑️ 배경 제거</button>
+                <img class="nobg-preview" id="nobg2">
+                <button class="btn-download-nobg" id="downloadNobg2" onclick="event.stopPropagation(); downloadNoBg(2)">📥 배경 제거 이미지 다운로드</button>
+            </div>
+        </div>
+
+        <div class="settings">
+            <h3>설정</h3>
+            <div class="setting-row">
+                <label for="resizeMode">크기 조정 모드</label>
+                <select id="resizeMode" style="padding: 8px 12px; border-radius: 8px; border: 2px solid #667eea; font-size: 0.95em; cursor: pointer; background: white;">
+                    <option value="nobg">✨ 배경 제거 + 크기 동일화 (추천)</option>
+                    <option value="smart">🤖 AI 자동 정렬 (최고 품질)</option>
+                    <option value="center">중앙 정렬</option>
+                    <option value="contain">비율 유지</option>
+                    <option value="fit">첫 번째 이미지에 맞춤</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label for="frames">프레임 수 (부드러움)</label>
+                <input type="range" id="frames" min="5" max="30" value="12">
+                <span class="value" id="framesValue">12</span>
+            </div>
+            <div class="setting-row">
+                <label for="duration">프레임 지속시간 (ms)</label>
+                <input type="range" id="duration" min="20" max="500" value="100" step="10">
+                <span class="value" id="durationValue">100</span>
+            </div>
+        </div>
+
+        <button class="btn btn-generate" id="generateBtn" disabled>GIF 생성하기</button>
+        <button class="btn btn-download" id="downloadBtn">GIF 다운로드</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #667eea;">GIF를 생성하는 중입니다...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <h3 style="margin-bottom: 20px; color: #333;">생성된 GIF</h3>
+            <img id="resultGif">
+        </div>
+    </div>
+
+    <script>
+        let file1 = null;
+        let file2 = null;
+        let generatedFilename = null;
+
+        // 파일 선택 이벤트
+        document.getElementById('file1').addEventListener('change', function(e) {
+            handleFileSelect(e, 1);
+        });
+
+        document.getElementById('file2').addEventListener('change', function(e) {
+            handleFileSelect(e, 2);
+        });
+
+        let noBgFilename1 = null;
+        let noBgFilename2 = null;
+
+        function handleFileSelect(event, num) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                if (num === 1) file1 = file;
+                else file2 = file;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(`preview${num}`);
+                    const uploadBox = document.getElementById(`uploadBox${num}`);
+                    const removeBgBtn = document.getElementById(`removeBg${num}`);
+
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    uploadBox.classList.add('has-image');
+                    removeBgBtn.style.display = 'block';
+
+                    // 배경 제거 미리보기 숨기기
+                    document.getElementById(`nobg${num}`).style.display = 'none';
+                    document.getElementById(`downloadNobg${num}`).style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+
+                checkCanGenerate();
+            }
+        }
+
+        function checkCanGenerate() {
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = !(file1 && file2);
+        }
+
+        // 슬라이더 값 업데이트
+        document.getElementById('frames').addEventListener('input', function(e) {
+            document.getElementById('framesValue').textContent = e.target.value;
+        });
+
+        document.getElementById('duration').addEventListener('input', function(e) {
+            document.getElementById('durationValue').textContent = e.target.value;
+        });
+
+        // GIF 생성
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            const formData = new FormData();
+            formData.append('image1', file1);
+            formData.append('image2', file2);
+            formData.append('frames', document.getElementById('frames').value);
+            formData.append('duration', document.getElementById('duration').value);
+            formData.append('resize_mode', document.getElementById('resizeMode').value);
+
+            // UI 업데이트
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('generateBtn').disabled = true;
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    generatedFilename = data.filename;
+                    document.getElementById('resultGif').src = `/download/${data.filename}?t=${Date.now()}`;
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('downloadBtn').style.display = 'block';
+                } else {
+                    showError(data.error || 'GIF 생성에 실패했습니다.');
+                }
+            } catch (error) {
+                showError('서버와 통신 중 오류가 발생했습니다.');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('generateBtn').disabled = false;
+            }
+        });
+
+        // 다운로드
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            if (generatedFilename) {
+                window.location.href = `/download/${generatedFilename}`;
+            }
+        });
+
+        // 배경 제거
+        async function removeBackground(num) {
+            const file = num === 1 ? file1 : file2;
+            if (!file) return;
+
+            const btn = document.getElementById(`removeBg${num}`);
+            btn.disabled = true;
+            btn.textContent = '⏳ 배경 제거 중...';
+
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch('/remove-background', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // 배경 제거된 이미지 표시
+                    const nobgPreview = document.getElementById(`nobg${num}`);
+                    const downloadBtn = document.getElementById(`downloadNobg${num}`);
+
+                    nobgPreview.src = `/download/${data.filename}?t=${Date.now()}`;
+                    nobgPreview.style.display = 'block';
+                    downloadBtn.style.display = 'block';
+
+                    // 파일명 저장
+                    if (num === 1) noBgFilename1 = data.filename;
+                    else noBgFilename2 = data.filename;
+
+                    btn.textContent = '✅ 배경 제거 완료';
+                } else {
+                    showError(data.error || '배경 제거에 실패했습니다.');
+                    btn.textContent = '🗑️ 배경 제거';
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                showError('배경 제거 중 오류가 발생했습니다.');
+                btn.textContent = '🗑️ 배경 제거';
+                btn.disabled = false;
+            }
+        }
+
+        // 배경 제거 이미지 다운로드
+        function downloadNoBg(num) {
+            const filename = num === 1 ? noBgFilename1 : noBgFilename2;
+            if (filename) {
+                window.location.href = `/download/${filename}`;
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
