@@ -20,11 +20,31 @@ pip install -r requirements.txt
 
 ## 실행 방법
 
+### 간편 실행 (추천)
+
+**Mac/Linux:**
 ```bash
-python app.py
+./run_local.sh
 ```
 
-웹 브라우저에서 `http://localhost:5000` 으로 접속하세요.
+**Windows:**
+```cmd
+run_local.bat
+```
+
+### 수동 실행
+
+```bash
+# 의존성 설치
+pip install -r requirements.txt
+
+# 서버 실행
+python app.py
+# 또는
+python3 app.py
+```
+
+웹 브라우저에서 `http://localhost:5000` 또는 `http://localhost:8080` 으로 접속하세요.
 
 ## 사용 방법
 
